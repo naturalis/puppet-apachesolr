@@ -37,32 +37,42 @@
 #
 class apachesolr (
   $solr_version           = '4.7.2',
-  $solr_data_dir          = '/data/solr/bla/boe',
+  $solr_data_dir          = '/data/solr',
   $solr_download_location = 'http://apache.mirror.1000mbps.com/lucene/solr',
 ){
  
   $path = ['/usr/bin', '/usr/sbin','/bin','/sbin']
 
   common::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
-  #::ensure_package{'wget':}
-  exec{'download solr':
-    command => "wget ${solr_download_location}/${solr_version}/solr-${solr_version}.tgz -O /tmp/solr-${solr_version}",
-    unless  => "test -f /tmp/solr-${solr_version}",
-    path    => $path,
-    require => Package['wget'],
-  }
 
   common::directory_structure{$solr_data_dir:
     user    => 'tomcat7',
     require => Package['tomcat7'],
   }
-  
-  exec{'extract solr': 
-    command => "tar -xvf /tmp/solr-${solr_version}",
-    cwd     => $solr_data_dir,
-    require => Exec["create_$solr_data_dir"],
-    path    => $path,
+
+  common::download_extract{"solr-${solr_version}.tgz"
+    link        => "${solr_download_location}/${solr_version}/solr-${solr_version}.tgz",
+    extract_dir => $solr_data_dir,
+    creates     => "${solr_data_dir}/solr-${solr_version}",
+    require     => Common::directory_structure[$solr_data_dir],
   }
+
+  
+  
+  # exec{'extract solr': 
+  #   command => "tar -xvf /tmp/solr-${solr_version}",
+  #   cwd     => $solr_data_dir,
+  #   require => Exec["create_$solr_data_dir"],
+  #   path    => $path,
+  #   unless  => "test -d $solr_data_dir/solr-${solr_version}"
+  # }
+
+  # exec{'download solr':
+  #   command => "wget ${solr_download_location}/${solr_version}/solr-${solr_version}.tgz -O /tmp/solr-${solr_version}",
+  #   unless  => "test -f /tmp/solr-${solr_version}",
+  #   path    => $path,
+  #   require => Package['wget'],
+  # }
 
 
   
