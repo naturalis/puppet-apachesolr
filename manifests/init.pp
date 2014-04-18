@@ -54,7 +54,7 @@ class apachesolr (
     link        => "${solr_download_location}/${solr_version}/solr-${solr_version}.tgz",
     extract_dir => $solr_data_dir,
     creates     => "${solr_data_dir}/solr-${solr_version}",
-    require     => Common::directory_structure[$solr_data_dir],
+    require     => Common::Directory_structure[$solr_data_dir],
   }
 
   
