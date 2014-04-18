@@ -58,6 +58,7 @@ class apachesolr (
     command => "tar -xvf /tmp/solr-${solr_version}",
     cwd     => $solr_data_dir,
     require => Exec["create_$solr_data_dir"],
+    path    => $path,
   }
 
 
