@@ -42,7 +42,7 @@ class apachesolr (
  
   $path = ['/usr/bin', '/usr/sbin','/bin','/sbin']
 
-  ::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
+  apachesolr::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
   #::ensure_package{'wget':}
   exec{'download solr':
     command => "wget ${solr_download_location}/${solr_version}/solr-${solr_version}.tgz -O /tmp/solr-${solr_version}",
