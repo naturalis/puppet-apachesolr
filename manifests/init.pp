@@ -37,6 +37,7 @@
 #
 class apachesolr (
   $solr_version           = '4.7.2',
+  $solr_data_dir          = '/data/solr/bla/boe',
   $solr_download_location = 'http://apache.mirror.1000mbps.com/lucene/solr',
 ){
  
@@ -51,12 +52,13 @@ class apachesolr (
     require => Package['wget'],
   }
 
-
+  apachesolr::directory_structure{$solr_data_dir:}
   
-
-
-  
-
+  exec{'extract solr': 
+    command => "tar -xvf /tmp/solr-${solr_version}",
+    cwd     => $solr_data_dir,
+    require => Exec["create_$solr_data_dir"],
+  }
 
 
   define ensure_package(){
@@ -64,6 +66,21 @@ class apachesolr (
       package{ $name :
         ensure => 'latest',
       }
+    }
+  }
+  
+
+  define directory_structure(
+    $user = 'root',
+    $mode = '755',
+  ){
+
+    #if !is_string($mode) { Fail('Please enter mode as a string')}
+    #if size($mode) != 3 { Fail('Please use 3 digit mode') }
+
+    exec{"create_${name}":
+      command => "/usr/bin/mkdir -p ${name} ; /bin/chmod ${mode} ${name} ; /bin/chown ${user} ${name}",
+      unless  => "/usr/bin/stat -c '%U' ${name} | /bin/grep ${user}"
     }
   }
 
