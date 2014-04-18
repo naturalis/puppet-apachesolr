@@ -44,7 +44,7 @@ class apachesolr (
  
   $path = ['/usr/bin', '/usr/sbin','/bin','/sbin']
 
-  ensure_packages(['tomcat7','openjdk-7-jre','wget'])
+  ensure_packages(['tomcat7','openjdk-7-jdk','wget'])
 
   common::directory_structure{$solr_data_dir:
     user    => 'tomcat7',
@@ -89,7 +89,7 @@ class apachesolr (
     cwd     => "${tomcat_webapps_dir}/solr",
     path    => $path,
     require => [
-      Package['openjdk-7-jre'],
+      Package['openjdk-7-jdk'],
       File["${tomcat_webapps_dir}/solr"]
     ],
     notify  => Service['tomcat7']
