@@ -43,7 +43,8 @@ class apachesolr (
  
   $path = ['/usr/bin', '/usr/sbin','/bin','/sbin']
 
-  common::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
+  #common::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
+  ensure_packages(['tomcat7','openjdk-7-jre','wget'])
 
   common::directory_structure{$solr_data_dir:
     user    => 'tomcat7',
