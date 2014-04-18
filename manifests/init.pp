@@ -52,7 +52,10 @@ class apachesolr (
     require => Package['wget'],
   }
 
-  apachesolr::directory_structure{$solr_data_dir:}
+  apachesolr::directory_structure{$solr_data_dir:
+    user    => 'tomcat7',
+    require => Package['tomcat7'],
+  }
   
   exec{'extract solr': 
     command => "tar -xvf /tmp/solr-${solr_version}",
