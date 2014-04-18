@@ -36,14 +36,14 @@
 # Copyright 2014 Your name here, unless otherwise noted.
 #
 class apachesolr (
-  solr_version = '4.7.2',
-  solr_download_location = 'http://apache.mirror.1000mbps.com/lucene/solr',
+  $solr_version           = '4.7.2',
+  $solr_download_location = 'http://apache.mirror.1000mbps.com/lucene/solr',
 ){
  
-  path = ['/usr/bin', '/usr/sbin','/bin','/sbin']
+  $path = ['/usr/bin', '/usr/sbin','/bin','/sbin']
 
-  ::ensure_package{['tomcat7','openjdk-7-jre','wget']}
-
+  ::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
+  #::ensure_package{'wget':}
   exec{'download solr':
     command => "wget ${solr_download_location}/${solr_version}/solr-${solr_version}.tgz -O /tmp/solr-${solr_version}",
     unless  => "test -f /tmp/solr-${solr_version}",
