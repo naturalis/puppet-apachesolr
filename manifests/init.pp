@@ -64,7 +64,7 @@ class apachesolr (
   }
 
   exec{'copy solr lib to tomcat':
-    command => "cp -fr ${solr_data_dir}/example/lib/* /usr/share/tomcat7/lib",
+    command => "cp -fr ${solr_data_dir}/solr-${solr_version}/example/lib/* /usr/share/tomcat7/lib",
     path    => $path,
     require => [
       Common::Download_extract["solr-${solr_version}.tgz"],
@@ -85,7 +85,7 @@ class apachesolr (
   }
 
   exec { 'extract solr war file':
-    command => "jar -xvf solr-${solr_version}.war",
+    command => "jar -xvf ${solr_data_dir}/solr-${solr_version}/dist/solr-${solr_version}.war",
     cwd     => "${tomcat_webapps_dir}/solr",
     path    => $path,
     require => [
