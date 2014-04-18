@@ -43,7 +43,7 @@ class apachesolr (
  
   $path = ['/usr/bin', '/usr/sbin','/bin','/sbin']
 
-  apachesolr::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
+  common::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
   #::ensure_package{'wget':}
   exec{'download solr':
     command => "wget ${solr_download_location}/${solr_version}/solr-${solr_version}.tgz -O /tmp/solr-${solr_version}",
@@ -52,7 +52,7 @@ class apachesolr (
     require => Package['wget'],
   }
 
-  apachesolr::directory_structure{$solr_data_dir:
+  common::directory_structure{$solr_data_dir:
     user    => 'tomcat7',
     require => Package['tomcat7'],
   }
@@ -65,27 +65,6 @@ class apachesolr (
   }
 
 
-  define ensure_package(){
-    if !defined(Package[$name]) {
-      package{ $name :
-        ensure => 'latest',
-      }
-    }
-  }
   
-
-  define directory_structure(
-    $user = 'root',
-    $mode = '755',
-  ){
-
-    #if !is_string($mode) { Fail('Please enter mode as a string')}
-    #if size($mode) != 3 { Fail('Please use 3 digit mode') }
-
-    exec{"create_${name}":
-      command => "/bin/mkdir -p ${name} ; /bin/chmod ${mode} ${name} ; /bin/chown ${user} ${name}",
-      unless  => "/usr/bin/stat -c '%U' ${name} | /bin/grep ${user}"
-    }
-  }
 
 }
