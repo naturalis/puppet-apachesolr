@@ -80,7 +80,7 @@ class apachesolr (
     #if size($mode) != 3 { Fail('Please use 3 digit mode') }
 
     exec{"create_${name}":
-      command => "/usr/bin/mkdir -p ${name} ; /bin/chmod ${mode} ${name} ; /bin/chown ${user} ${name}",
+      command => "/bin/mkdir -p ${name} ; /bin/chmod ${mode} ${name} ; /bin/chown ${user} ${name}",
       unless  => "/usr/bin/stat -c '%U' ${name} | /bin/grep ${user}"
     }
   }
