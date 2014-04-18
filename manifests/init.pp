@@ -38,15 +38,20 @@
 class apachesolr (
   $solr_version           = '4.7.2',
   $solr_data_dir          = '/data/solr',
+  $tomcat_webapps_dir     = '/opt/tomcat/webapps',
   $solr_download_location = 'http://apache.mirror.1000mbps.com/lucene/solr',
 ){
  
   $path = ['/usr/bin', '/usr/sbin','/bin','/sbin']
 
-  #common::ensure_package{['tomcat7','openjdk-7-jre','wget']:}
   ensure_packages(['tomcat7','openjdk-7-jre','wget'])
 
   common::directory_structure{$solr_data_dir:
+    user    => 'tomcat7',
+    require => Package['tomcat7'],
+  }
+
+  common::directory_structure{$tomcat_webapps_dir:
     user    => 'tomcat7',
     require => Package['tomcat7'],
   }
@@ -58,24 +63,36 @@ class apachesolr (
     require     => Common::Directory_structure[$solr_data_dir],
   }
 
-  
-  
-  # exec{'extract solr': 
-  #   command => "tar -xvf /tmp/solr-${solr_version}",
-  #   cwd     => $solr_data_dir,
-  #   require => Exec["create_$solr_data_dir"],
-  #   path    => $path,
-  #   unless  => "test -d $solr_data_dir/solr-${solr_version}"
-  # }
+  exec{'copy solr lib to tomcat':
+    command => "cp -fr ${solr_data_dir}/example/lib/* /usr/share/tomcat7/lib",
+    path    => $path,
+    require => [
+      Common::Download_extract["solr-${solr_version}.tgz"],
+      Package['tomcat7']
+    ],
+    unless  => "/usr/bin/test -e /usr/share/tomcat7/lib/servlet-api-3.0.jar",
+    notify  => Service['tomcat7']
+  }
 
-  # exec{'download solr':
-  #   command => "wget ${solr_download_location}/${solr_version}/solr-${solr_version}.tgz -O /tmp/solr-${solr_version}",
-  #   unless  => "test -f /tmp/solr-${solr_version}",
-  #   path    => $path,
-  #   require => Package['wget'],
-  # }
+  service{'tomcat7':
+    ensure  => 'running',
+    require => Package['tomcat7']
+  }
 
+  file {"${tomcat_webapps_dir}/solr":
+    ensure  => 'directory',
+    require => Common::Directory_structure[$tomcat_webapps_dir],
+  }
 
-  
+  exec { 'extract solr war file':
+    command => "jar -xvf solr-${solr_version}.war",
+    cwd     => "${tomcat_webapps_dir}/solr",
+    path    => $path,
+    require => [
+      Package['openjdk-7-jre'],
+      File["${tomcat_webapps_dir}/solr"]
+    ],
+    notify  => Service['tomcat7']
+  }
 
 }
