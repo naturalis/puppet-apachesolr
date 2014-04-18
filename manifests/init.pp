@@ -50,7 +50,7 @@ class apachesolr (
     require => Package['tomcat7'],
   }
 
-  common::download_extract{"solr-${solr_version}.tgz"
+  common::download_extract{"solr-${solr_version}.tgz":
     link        => "${solr_download_location}/${solr_version}/solr-${solr_version}.tgz",
     extract_dir => $solr_data_dir,
     creates     => "${solr_data_dir}/solr-${solr_version}",
