@@ -1,4 +1,4 @@
-puppet-monophylizer
+puppet-apachesolr
 ===================
 
 Puppet module to install 
@@ -42,5 +42,5 @@ The module has been tested on:
 
 Authors
 -------------
-Author Name <p.gomersbach@gmail.com>
+Author Name <atze.devries@.naturalis.nl>
 
